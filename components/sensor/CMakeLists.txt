@@ -4,10 +4,10 @@
 
 idf_component_register(
 SRCS            #这里标记出目录下的c文件 
-"MPU6050/MPU6050.c"
+"MPU6050/MPU6050.c"     "SPL06-001/SPL06-001.c"
 			
 INCLUDE_DIRS  	#这里标记出目录中存放h文件的文件夹
-"MPU6050/include"
+"MPU6050/include"       "SPL06-001/include"
 
 REQUIRES        #标记出需要的资源
 inside_communication 

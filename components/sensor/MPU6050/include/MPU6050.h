@@ -48,5 +48,5 @@ extern sensorData_t sensorData;
 extern int mpu6050_test(void);
 extern int mpu6050_init(void);
 extern int mpu6050_read_data(sensorData_t *data);
-
+int mpu6050_offset(INT16_XYZ *value, INT16_XYZ *offset, uint16_t sensivity);
 #endif // __MPU6050_H

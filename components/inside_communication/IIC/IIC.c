@@ -24,7 +24,7 @@ void I2C_Init(void)
     //挂载device1
     i2c_device_config_t dev1_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = 0x68,
+        .device_address = 0x68, //MPU6050_SENSOR_ADDR
         .scl_speed_hz = I2C_MASTER_FREQ_HZ,
     };
     
@@ -34,7 +34,7 @@ void I2C_Init(void)
     //挂载device2
     i2c_device_config_t dev2_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = 0x68,
+        .device_address = 0x10, //SPL06_001_SENSOR_ADDR
         .scl_speed_hz = I2C_MASTER_FREQ_HZ,
     };
     
