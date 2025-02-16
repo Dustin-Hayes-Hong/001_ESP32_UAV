@@ -1,11 +1,10 @@
-# _Sample project_
+# 介绍 
+开发工具VSCode  ESP-IDF，编译环境为esp-idf v5.4(https://docs.espressif.com/projects/esp-idf/zh_CN/v5.4/esp32/index.html)
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+复刻项目：[#第八届立创电赛#四轴飞行器Liguanxi-UAV（空心杯无人机飞控](https://oshwhub.com/liguanxi/si-zhou-fei-xing-qi-ESP-Liguanxi)，原编译环境为esp-idf 4.4
 
 This is the simplest buildable example. The example is used by command `idf.py create-project`
 that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
-
-
 
 ## How to use example
 We encourage the users to use the example as a template for the new projects.
