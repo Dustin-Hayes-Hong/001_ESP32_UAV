@@ -1,0 +1,24 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.espIdfPathWin": "c:\\esp32\\v5.4\\esp-idf",
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ],
+    "idf.portWin": "COM5",
+    "idf.toolsPathWin": "C:\\esp32\\.espressif",
+    "files.associations": {
+        "freertos.h": "c",
+        "i2c_master.h": "c",
+        "iic.h": "c",
+        "stdio.h": "c",
+        "mpu6050.h": "c",
+        "string.h": "c",
+        "task.h": "c",
+        "xutility": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c"
+    },
+    "idf.flashType": "UART"
+}
