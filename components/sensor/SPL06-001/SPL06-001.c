@@ -60,7 +60,7 @@ float temperature;            // 温度值 (单位：摄氏度)
 float asl;                    // 海拔高度 (单位：米)
 alt_bro ALT_BRO;             // 海拔高度和垂直速度数据
 
-//相关常数
+//相关常数，参考5.7.3
 static  const uint8_t num_map[8] = {1,2,4,8,16,32,64,128};  // 2 的幂次方表，用于配置 SPL06 的过采样率或采样率
 static  const uint32_t scaleFactor[8] = {524288, 1572864, 3670016, 7864320, 253952, 516096, 1040384, 2088960};  // SPL06 压力计和温度计比例因子，用于原始数据转换
 
@@ -79,6 +79,7 @@ int spl06_test(void)
         return ESP_FAIL;}
 }
 
+//根据手册5.7.1节，补偿压力校准系数为C00，C10，C20，C30，C01，C11和C21，补偿温度校准系数为C0和C1
 //获取气压计校准参数
 int spl06_get_calib_param(void)
 {
@@ -107,7 +108,7 @@ int spl06_get_calib_param(void)
     return ESP_OK;
 }
 
-//获取气压计原始数据
+//获取气压计原始数据，参考手册8.1和8.2
 void SPL06GetPressure(void)
 {
     uint8_t data[SPL06_DATA_FRAME_SIZE];
@@ -121,7 +122,7 @@ void SPL06GetPressure(void)
     SPL06RawTemperature = (SPL06RawTemperature & 0x800000) ? (0xFF000000 | SPL06RawTemperature) : SPL06RawTemperature;
 }
 
-//计算气压计实际数据
+//计算温度计实际数据，参考手册5.7.2
 float spl0601_get_temperature(int32_t rawTemperature)
 {
     float fTCompensate;
@@ -132,13 +133,14 @@ float spl0601_get_temperature(int32_t rawTemperature)
     return fTCompensate;
 }
 
-//计算温度计实际数据
+//计算压力计实际数据，参考手册5.7.1
 float spl0601_get_pressure(int32_t rawPressure, int32_t rawTemperature)
 {
     float fTsc, fPsc;
     float qua2, qua3;
     float fPCompensate;
 
+    //下面的公式来自手册5.7.1
     fTsc = rawTemperature / (float)kt;
     fPsc = rawPressure / (float)kp;
     qua2 = spl06Calib.c10 + fPsc * (spl06Calib.c20 + fPsc * spl06Calib.c30);
@@ -220,6 +222,7 @@ int spl06_offset(void)
 
 int spl06_init(void)
 {
+    //初始化配置可参考手册6.1
     printf("********************SPL06-001初始化开始********************\n");
 
 	if(spl06_test() == ESP_OK){
@@ -227,14 +230,18 @@ int spl06_init(void)
 		 // 读取校准数据
             spl06_get_calib_param();
 
+            //参考手册8.3
 		    if(i2c_write_reg(dev2_handle,0x06,Pressure_measurement_rate << 4 | Pressure_oversampling_rate) == ESP_OK) printf("1.配置压力寄存器，每秒刷新%d次，过采样率%d次（高精度）\n",num_map[Pressure_measurement_rate],num_map[Pressure_oversampling_rate]);
 		    kp = scaleFactor[Pressure_oversampling_rate];
-
+            
+            //参考手册8.4
 		    if(i2c_write_reg(dev2_handle,0x07,Temperature_measurement_rate << 4 | Temperature_oversampling_rate | 0x80) == ESP_OK) printf("2.配置温度寄存器，使用外部传感器，3.6ms测量一次，采样1次（默认）\n");
 		    kt = scaleFactor[Temperature_oversampling_rate];
 
-			if(i2c_write_reg(dev2_handle,0x09,0x0C) == ESP_OK) printf("3.温度和压力结果移位\n");
+            //参考手册8.6
+			if(i2c_write_reg(dev2_handle,0x09,0x0C) == ESP_OK) printf("3.温度和压力结果移位\n");    //当过采样率为> 8时，必须设置第3位和第2位为“ 1”
 
+            //参考手册8.5
 			if(i2c_write_reg(dev2_handle,0x08,0x07) == ESP_OK) printf("4.开始连续测量压力和温度\n");
 
 		    if(i2c_write_reg(dev2_handle,0x08,0x07) == ESP_OK) printf("4.开始连续测量压力和温度\n");
