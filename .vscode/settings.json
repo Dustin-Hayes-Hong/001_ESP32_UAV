@@ -24,7 +24,9 @@
         "adc_cali.h": "c",
         "esp_adc_cal.h": "c",
         "adc_types_legacy.h": "c",
-        "adc_types.h": "c"
+        "adc_types.h": "c",
+        "vbat.h": "c",
+        "led.h": "c"
     },
     "idf.flashType": "UART"
 }
