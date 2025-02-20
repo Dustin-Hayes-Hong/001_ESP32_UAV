@@ -28,5 +28,6 @@
         "vbat.h": "c",
         "led.h": "c"
     },
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "idf.pythonInstallPath": "C:\\esp32\\.espressif\\tools\\idf-python\\3.11.2\\python.exe"
 }
