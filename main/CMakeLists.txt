@@ -4,4 +4,5 @@ idf_component_register( SRCS            "main.c"
                                         "sensor"
                                         "LED"
                                         "VBAT"
+                                        "external_communication"
                         )

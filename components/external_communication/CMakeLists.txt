@@ -4,14 +4,15 @@
 
 idf_component_register(
 SRCS            #这里标记出目录下的c文件
-"WIFI/WIFI.c"   "UDP/UDP.c"
+"WIFI/WIFI.c"   "UDP/UDP.c"     "remote_control/remote_control.c"
 			
 INCLUDE_DIRS  	#这里标记出目录中存放h文件的文件夹
-"WIFI/include"  "UDP/include"
+"WIFI/include"  "UDP/include"   "remote_control/include"
 
 REQUIRES        #标记出需要的资源
 esp_wifi
 nvs_flash
+inside_communication
 
 PRIV_REQUIRES   #标记出需要的资源
 

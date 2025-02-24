@@ -4,13 +4,14 @@
 
 idf_component_register(
 SRCS            #这里标记出目录下的c文件
-"IIC/IIC.c"
+"IIC/IIC.c"     "UART/UART.c"
 			
 INCLUDE_DIRS  	#这里标记出目录中存放h文件的文件夹
-"IIC/include"
+"IIC/include"   "UART/include"
 
 REQUIRES        #标记出需要的资源
 esp_driver_i2c
+esp_driver_uart
 
 PRIV_REQUIRES   #标记出需要的资源
 
