@@ -1,6 +1,5 @@
 #include "MPU6050.h"
 #include "IIC.h"
-
 //可参考资料：https://doc.embedfire.com/mcu/stm32/f103zhinanzhe/std/zh/latest/book/MPU6050.html
 
 sensorData_t sensorData;

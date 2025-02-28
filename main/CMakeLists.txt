@@ -5,4 +5,5 @@ idf_component_register( SRCS            "main.c"
                                         "LED"
                                         "VBAT"
                                         "external_communication"
+                                        "flight_controller"
                         )

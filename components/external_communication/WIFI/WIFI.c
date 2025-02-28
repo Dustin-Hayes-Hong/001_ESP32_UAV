@@ -1,19 +1,6 @@
 #include "WIFI.h" //WIFI头文件
 
-#include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "esp_system.h"
-#include "esp_wifi.h"
-#include "esp_event.h"
-#include "esp_log.h"
-#include "nvs_flash.h"
-
-#include "lwip/err.h"
-#include "lwip/sys.h"
-
-#define ESP_WIFI_SSID "UAV_Station"
+#define ESP_WIFI_SSID "DHH"
 #define ESP_WIFI_PASS "88888888"
 #define ESP_MAXIMUM_RETRY 2
 
@@ -118,6 +105,8 @@ void wifi_init_sta(void)
     {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
     }
+
+    
 }
 
 void WIFI_Init(void)

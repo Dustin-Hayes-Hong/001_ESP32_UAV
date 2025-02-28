@@ -4,6 +4,7 @@
 #include <stdio.h>              //标准输入输出
 #include <string.h>             //字符串操作
 
+
 #define SPL06_001_SENSOR_ADDR                 0x10        //SPL06-001传感器地址
 #define SPL06_001_WHO_AM_I_REG_ADDR           0x0D        //SPL06-001传感器寄存器地址，通过读取这个地址来验证连接是否正常
 #define SPL06_COEFFICIENT_CALIB_REG		      0x10        //校准系数寄存器地址
@@ -41,6 +42,10 @@ typedef struct {
     float v;        // 垂直速度 (米/秒)  
 } alt_bro;
 
+extern alt_bro ALT_BRO;
+extern int AirPressure_calibration;   // 气压计校准标志，用于指示是否需要进行校准
+
 extern int spl06_init(void);
+extern void Height_Get(void);
 
 #endif // __SPL06_001_H

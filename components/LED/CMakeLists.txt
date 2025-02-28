@@ -12,6 +12,7 @@ INCLUDE_DIRS  	#这里标记出目录中存放h文件的文件夹
 REQUIRES        #标记出需要的资源
 esp_driver_gpio
 VBAT
+flight_controller
 
 PRIV_REQUIRES   #标记出需要的资源
 

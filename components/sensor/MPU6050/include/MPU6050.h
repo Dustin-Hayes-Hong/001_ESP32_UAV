@@ -3,6 +3,7 @@
 
 #include <stdio.h>              //标准输入输出
 #include <string.h>             //字符串操作
+#include <stdint.h>
 
 #define MPU6050_SENSOR_ADDR                 0x68        //MPU6050传感器地址
 #define MPU6050_WHO_AM_I_REG_ADDR           0x75        //MPU6050传感器寄存器地址，通过读取这个地址来验证连接是否正常
@@ -44,6 +45,9 @@ typedef struct
 } sensorData_t;
 
 extern sensorData_t sensorData;
+
+extern int Gyroscope_calibration;
+extern int Acceleration_calibration;
 
 extern int mpu6050_test(void);
 extern int mpu6050_init(void);

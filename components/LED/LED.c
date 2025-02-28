@@ -1,101 +1,90 @@
 #include "LED.h"
-
+#include "Data_declaration.h"
 #include "VBAT.h"//电池电压读取头文件
+#include "IMU.h"	//姿态解算头文件
+/**
+ * @brief LED任务，周期性控制LED状态
+ * @param pvParameter 任务参数（未使用）
+ */
+void led_task(void *pvParameters) {
+    // 定义常量和变量
+    const TickType_t LED_PERIOD = pdMS_TO_TICKS(50); // LED状态更新周期：50ms
+    const uint32_t VBAT_THRESHOLD = 380;             // 电池电压阈值：3.8V
+    const uint8_t RC_CHECK_INTERVAL = 100;           // RC连接检查间隔计数（100 * 50ms = 5s）
 
-#include "driver/gpio.h"
+    bool is_led2_blinking = false;                   // 黄灯闪烁状态
+    uint8_t rc_check_counter = 0;                    // RC状态检查计数器
+    TickType_t last_wake_time = xTaskGetTickCount(); // 上次唤醒时间
 
-#include "freertos/FreeRTOS.h"//RTOS头文件
-#include "freertos/task.h"    //RTOS头文件
+    while (1) {
+        vTaskDelayUntil(&last_wake_time, LED_PERIOD); // 周期性延迟
+        if(init_ok){
+            // 黄灯控制：电池电压检测
+        if (VBAT <= VBAT_THRESHOLD) {
+            is_led2_blinking = !is_led2_blinking;     // 电压低时闪烁
+            gpio_set_level(LED2, is_led2_blinking);
+        } else {
+            gpio_set_level(LED2, 0);                  // 电压正常时常亮
+        }
 
-state_t state;          //状态
-
-void led_Task(void *pvParameter)
-{
-	bool temp_1 = false;
-	int temp_val_1 = 0;
-	TickType_t adp = xTaskGetTickCount();
-	const TickType_t adg = 50;
-	while(1){
-		vTaskDelayUntil(&adp,adg);
-		if(1){
-
-			//*************黄灯*********************
-			if(VBAT <= 380){//如果电池电压小于3.8v就闪烁警告
-			temp_1 = !temp_1; //通过循环取反达到闪烁的效果
-			gpio_set_level(LED2, temp_1);
-			}else{
-				gpio_set_level(LED2, 0);//电池电量大于3.8v就常亮
-			}
-			//*************黄灯*********************
-
-
-			//*************绿灯*********************
-			if(temp_val_1 >= 100){
-				temp_val_1 = 0;
-				if(state.rc_link == true) {
-					gpio_set_level(LED1, 0);  //如果连接上灯亮
-				}
-				else {
-					gpio_set_level(LED1, 1);  //如果未连接灯灭
-					state.isRCLocked = false;
-				}
-				state.rc_link = false;                              //重置状态位
-			}else{
-				temp_val_1++;
-			}
-			//*************绿灯*********************
-
-
-			//*************蓝灯*********************
-
-
-
-
-
-
-			//*************蓝灯*********************
-
-		}
-	}
+        // 绿灯控制：RC连接状态检测
+        if (rc_check_counter >= RC_CHECK_INTERVAL) {
+            rc_check_counter = 0;                     // 重置计数器
+            if (state.rc_link) {
+                gpio_set_level(LED1, 0);              // RC连接时绿灯亮
+            } else {
+                gpio_set_level(LED1, 1);              // RC断开时绿灯灭
+                state.isRCLocked = false;             // 更新锁定状态
+            }
+            state.rc_link = false;                    // 重置RC连接状态
+        } else {
+            rc_check_counter++;                       // 计数器递增
+        }
+        }
+        
+    }
 }
 
-//LED初始化
-void LED_init(void){
+/**
+ * @brief 初始化LED相关的GPIO并启动LED任务
+ */
+void led_init(void) {
+    // 定义GPIO配置结构体
+    gpio_config_t led_config = {
+        .mode = GPIO_MODE_OUTPUT,           // 设置为输出模式
+        .intr_type = GPIO_INTR_DISABLE,     // 禁用中断
+        .pull_down_en = GPIO_PULLDOWN_DISABLE, // 禁用下拉
+        .pull_up_en = GPIO_PULLUP_DISABLE,     // 禁用上拉
+        .pin_bit_mask = (1ULL << LED1) | (1ULL << LED2) | (1ULL << LED3) // 配置所有LED引脚
+    };
 
+    // 应用GPIO配置
+    gpio_config(&led_config);
 
-	gpio_config_t led_conf;//创建GPIO结构体
+    // LED启动自检序列
+    const uint32_t DELAY_SHORT = pdMS_TO_TICKS(500);  // 短延时：500ms
+    const uint32_t DELAY_LONG = pdMS_TO_TICKS(1000);  // 长延时：1000ms
 
-	led_conf.mode = GPIO_MODE_OUTPUT;		    	 // 配置gpio为输出模式
-	led_conf.intr_type = GPIO_INTR_DISABLE; 	 // 禁止中断
-	led_conf.pin_bit_mask = 1ULL << LED1;      		 // 配置GPIO引脚
-	led_conf.pull_down_en = 0;                 	 	 // 禁止失能
-	led_conf.pull_up_en = 0;                   	 	 // 禁止失能
+    // 所有LED点亮
+    gpio_set_level(LED1, 1);
+    gpio_set_level(LED2, 1);
+    gpio_set_level(LED3, 1);
+    vTaskDelay(DELAY_SHORT);
 
-	gpio_config(&led_conf);                    	 	 // 配置LED1的GPIO参数
+    // 依次熄灭LED
+    gpio_set_level(LED3, 0);
+    vTaskDelay(DELAY_SHORT);
+    gpio_set_level(LED1, 0);
+    vTaskDelay(DELAY_SHORT);
+    gpio_set_level(LED2, 0);
+    vTaskDelay(DELAY_SHORT);
 
-	led_conf.pin_bit_mask = 1ULL << LED2;			 // 配置GPIO引脚
-	gpio_config(&led_conf);              			 // 配置LED2的GPIO参数
+    // 再次点亮并保持1秒
+    gpio_set_level(LED1, 1);
+    gpio_set_level(LED2, 1);
+    gpio_set_level(LED3, 1);
+    vTaskDelay(DELAY_LONG);
 
-	led_conf.pin_bit_mask = 1ULL << LED3;			 // 配置GPIO引脚
-	gpio_config(&led_conf);              			 // 配置LED2的GPIO参数
-
-	gpio_set_level(LED1, 1);
-	gpio_set_level(LED2, 1);
-	gpio_set_level(LED3, 1);
-	vTaskDelay(pdMS_TO_TICKS(500));//延时
-
-	gpio_set_level(LED3, 0);
-	vTaskDelay(pdMS_TO_TICKS(500));//延时
-	gpio_set_level(LED1, 0);
-	vTaskDelay(pdMS_TO_TICKS(500));//延时
-	gpio_set_level(LED2, 0);
-	vTaskDelay(pdMS_TO_TICKS(500));//延时
-
-	gpio_set_level(LED1, 1);
-	gpio_set_level(LED2, 1);
-	gpio_set_level(LED3, 1);
-	vTaskDelay(pdMS_TO_TICKS(1000));//延时
-
-	xTaskCreate(led_Task, "led_Task", 1024 * 5, NULL, 0, NULL); //创建任务，判断状态改变灯的亮灭
-
+    // 创建LED任务
+    xTaskCreate(led_task, "led_task", 5120, NULL, tskIDLE_PRIORITY, NULL);
 }

@@ -4,15 +4,17 @@
 
 idf_component_register(
 SRCS            #这里标记出目录下的c文件
-"PWM/PWM.c"
+"PWM/PWM.c"     "IMU/IMU.c"     "PID/PID.c"     "flight_control/flight_control.c"   "Data_declaration/Data_declaration.c"
 			
 INCLUDE_DIRS  	#这里标记出目录中存放h文件的文件夹 
-"PWM/include"
+"PWM/include"   "IMU/include"   "PID/include"   "flight_control/include"            "Data_declaration/include"
 
 REQUIRES        #标记出需要的资源
 esp_driver_ledc
 esp_driver_gpio
-
+inside_communication
+sensor
+external_communication
 
 PRIV_REQUIRES   #标记出需要的资源
 
